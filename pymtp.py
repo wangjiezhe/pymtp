@@ -897,7 +897,7 @@ class MTP:
 		else:
 			return LIBMTP_Filetype["UNKNOWN"]
 
-	def send_file_from_file(self, source, target, parent=0, callback=None):
+	def send_file_from_file(self, source, target, callback=None):
 		"""
 			Sends a file from the filesystem to the connected device
 			and stores it at the target filename inside the parent.
@@ -909,9 +909,6 @@ class MTP:
 			@param source: The path on the filesystem where the file resides
 			@type target: str
 			@param target: The target filename on the device
-			@type parent: int or 0
-			@param parent: The parent directory for the file to go 
-			 into; If 0, the file goes into main directory
 			@type callback: function or None
 			@param callback: The function provided to libmtp to 
 			 receive callbacks from ptp. Callback function must
@@ -934,7 +931,7 @@ class MTP:
 		  filesize=os.stat(source).st_size)
 
 		ret = self.mtp.LIBMTP_Send_File_From_File(self.device, source, \
-		  ctypes.pointer(metadata), callback, None, parent)
+		  ctypes.pointer(metadata), callback, None)
 
 		if (ret != 0):
 			self.debug_stack()
@@ -942,7 +939,7 @@ class MTP:
 
 		return metadata.item_id
 		
-	def send_track_from_file(self, source, target, metadata, parent=0, callback=None):
+	def send_track_from_file(self, source, target, metadata, callback=None):
 		"""
 			Sends a track from the filesystem to the connected 
 			device
@@ -953,9 +950,6 @@ class MTP:
 			@param target: The target filename on the device
 			@type metadata: LIBMTP_Track
 			@param metadata: The track metadata
-			@type parent: int or 0
-			@param parent: The parent directory for the track;
-			 if 0, the track will be placed in the base dir.
 			@type callback: function or None
 			@param callback: The function provided to libmtp to
 			 receive callbacks from ptp. Callback function must
@@ -974,12 +968,11 @@ class MTP:
 			callback = Progressfunc(callback)
 		
 		metadata.filename = target
-		metadata.parent_id = parent
 		metadata.filetype = self.find_filetype(source)
 		metadata.filesize = os.stat(source).st_size
 
 		ret = self.mtp.LIBMTP_Send_Track_From_File(self.device, source, \
-		  ctypes.pointer(metadata), callback, None, parent)
+		  ctypes.pointer(metadata), callback, None)
 
 		if (ret != 0):
 			self.debug_stack()
@@ -1109,14 +1102,14 @@ class MTP:
 		if (self.device == None):
 			raise NotConnected
 
-		ret = self.mtp.LIBMTP_Get_Playlist(self.device, playlist_id).contents
-
-		if (ret != 0):
+		try:
+			ret = self.mtp.LIBMTP_Get_Playlist(self.device, playlist_id).contents
+		except ValueError:
 			raise ObjectNotFound
 
 		return ret
 
-	def create_new_playlist(self, metadata, parent=0):
+	def create_new_playlist(self, metadata):
 		"""
 			Creates a new playlist based on the metadata object
 			passed.
@@ -1124,8 +1117,6 @@ class MTP:
 			@type metadata: LIBMTP_Playlist
 			@param metadata: A LIBMTP_Playlist object describing 
 			 the playlist
-			@type parent: int or 0
-			@param parent: The parent ID or 0 for base
 			@rtype: int
 			@return: The object ID of the new playlist
 		"""
@@ -1133,13 +1124,13 @@ class MTP:
 		if (self.device == None):
 			raise NotConnected
 		
-		ret = self.mtp.LIBMTP_Create_New_Playlist(self.device, ctypes.pointer(metadata), parent)
+		ret = self.mtp.LIBMTP_Create_New_Playlist(self.device, ctypes.pointer(metadata))
 
-		if (ret == 0):
+		if (ret != 0):
 			self.debug_stack()
 			raise CommandFailed
 
-		return ret
+		return metadata.playlist_id
 
 	def update_playlist(self, metadata):
 		"""
@@ -1249,7 +1240,7 @@ class MTP:
 
 		return ret
 
-	def create_folder(self, name, parent=0):
+	def create_folder(self, name, parent=0, storage=0):
 		"""
 			This creates a new folder in the parent. If the parent 
 			is 0, it will go in the main directory.
@@ -1258,6 +1249,9 @@ class MTP:
 			@param name: The name for the folder
 			@type parent: int
 			@param parent: The parent ID or 0 for main directory
+                        @type storage: int
+                        @param storage: The storage id or 0 to create the new folder
+                                        on the primary storage
 			@rtype: int
 			@return: Returns the object ID of the new folder
 		"""
@@ -1265,7 +1259,7 @@ class MTP:
 		if (self.device == None):
 			raise NotConnected
 			
-		ret = self.mtp.LIBMTP_Create_Folder(self.device, name, parent)
+		ret = self.mtp.LIBMTP_Create_Folder(self.device, name, parent, storage)
 
 		if (ret == 0):
 			self.debug_stack()
