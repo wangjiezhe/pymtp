@@ -9,7 +9,7 @@ import sys
 sys.path.insert(0, "../")
 
 import pymtp
-import pyid3lib
+from ID3 import *
 
 def usage():
 	print "Usage: %s <source> <target> <parent>\n(The parent id can be 0 for the root directory)" % (sys.argv[0])
@@ -26,20 +26,19 @@ def main():
 	target = sys.argv[2]
 	parent = int(sys.argv[3])
 
-	id3data = pyid3lib.tag(source)
+	id3data = ID3(source)
 
-	metadata = pymtp.LIBMTP_Track()
+        metadata = pymtp.LIBMTP_Track()
+	metadata.parent_id = parent;
 
-	if (hasattr(id3data, 'artist')):
+        if (hasattr(id3data, 'artist')):
 		metadata.artist = id3data.artist
 	if (hasattr(id3data, 'title')):
 		metadata.title = id3data.title
 	if (hasattr(id3data, 'album')):
 		metadata.album = id3data.album
-	if (hasattr(id3data, 'tracknum')):
-		metadata.tracknumber = id3data.tracknum
-		
-	track_id = mtp.send_track_from_file(source, target, metadata, parent=parent)
+
+	track_id = mtp.send_track_from_file(source, target, metadata)
 	print "Created new track with ID: %s" % (track_id)
 	mtp.disconnect()
 		
