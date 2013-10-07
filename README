@@ -1,8 +1,9 @@
 About
 ------
-PyMTP is a Pythonic wrapper around libmtp, allowing python applications to 
-communicate with MTP devices, such as the Microsoft(R) Zune(TM), Creative(R)
-Zen(TM) devices (except the Creative Zen Stone), and many others. 
+PyMTP is a Pythonic binding to LibMTP that allows Python programs to interact
+with LibMTP-supported devices. These devices include all recent Android
+devices, several popular MP3 players, including Creative Zen, several iRiver
+devices, NormSoft Pocket Tunes and many others.
 
 Why
 ----
@@ -12,10 +13,10 @@ work.
 
 Requirements
 ------------
-PyMTP 0.0.4 requires:
+PyMTP 0.0.5 requires:
 	* Python
 	* Ctypes (or Python 2.5, as it includes Ctypes)
-	* LibMTP 0.2.6 or above
+	* LibMTP 1.1 or above
 
 Installing
 -----------
