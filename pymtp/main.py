@@ -24,7 +24,7 @@ _libmtp.LIBMTP_Init()
 # ----------
 # Type Definitions
 # ----------
-_libmtp.LIBMTP_Detect_Raw_Devices = ctypes.c_int
+_libmtp.LIBMTP_Detect_Raw_Devices.restype = ctypes.c_int # actually LIBMTP_Error_Number enum
 _libmtp.LIBMTP_Get_Friendlyname.restype = ctypes.c_char_p
 _libmtp.LIBMTP_Get_Serialnumber.restype = ctypes.c_char_p
 _libmtp.LIBMTP_Get_Modelname.restype = ctypes.c_char_p
