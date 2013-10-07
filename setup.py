@@ -10,5 +10,5 @@ setup(name = "PyMTP",
       description = "LibMTP bindings in Python",
       author = "Nick Devito",
       author_email = "nick@nick125.com",
-      url = "http://nick125.com/projects/pymtp.html",
+      url = "https://pypi.python.org/pypi/PyMTP",
       py_modules = ["pymtp"])
