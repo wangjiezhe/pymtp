@@ -170,7 +170,8 @@ LIBMTP_File._fields_ = [("item_id", ctypes.c_uint32),
                         ("storage_id", ctypes.c_uint32),
                         ("filename", ctypes.c_char_p),
                         ("filesize", ctypes.c_uint64),
-			("filetype", ctypes.c_int),
+                        ("modificationdate", ctypes.c_uint64),
+			("filetype", ctypes.c_int), # LIBMTP_filetype_t enum
 			("next", ctypes.POINTER(LIBMTP_File))]
 
 class LIBMTP_Track(ctypes.Structure):
@@ -202,7 +203,8 @@ LIBMTP_Track._fields_ = [("item_id", ctypes.c_uint32),
 			("rating", ctypes.c_uint16),
 			("usecount", ctypes.c_uint32),
 			("filesize", ctypes.c_uint64),
-			("filetype", ctypes.c_int),
+                        ("modificationdate", ctypes.c_uint64),
+			("filetype", ctypes.c_int), # LIBMTP_filetype_t enum
 			("next", ctypes.POINTER(LIBMTP_Track))]
 
 class LIBMTP_Playlist(ctypes.Structure):
@@ -303,7 +305,9 @@ LIBMTP_Folder._fields_ = [("folder_id", ctypes.c_uint32),
                           ("sibling", ctypes.POINTER(LIBMTP_Folder)),
                           ("child", ctypes.POINTER(LIBMTP_Folder))]
 
-# Abstracted from libmtp 0.2.6.1's libmtp.h. This must be kept in sync.
+# Abstracted from libmtp's LIBMTP_filetype_t. This must be kept in sync.
+#  first checked in 0.2.6.1
+#  last checked in version 1.1.6
 LIBMTP_Filetype = {
 	"WAV":			ctypes.c_int(0),
 	"MP3":			ctypes.c_int(1),
@@ -346,7 +350,9 @@ LIBMTP_Filetype = {
 	"MHT":			ctypes.c_int(38),
 	"JP2":			ctypes.c_int(39),
 	"JPX":			ctypes.c_int(40),
-	"UNKNOWN":		ctypes.c_int(41),
+	"ALBUM":		ctypes.c_int(41),
+	"PLAYLIST":		ctypes.c_int(42),
+	"UNKNOWN":		ctypes.c_int(43),
 }
 
 # Synced from libmtp 0.2.6.1's libmtp.h. Must be kept in sync.
