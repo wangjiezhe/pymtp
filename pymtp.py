@@ -130,6 +130,34 @@ LIBMTP_DeviceStorage._fields_ = [("id", ctypes.c_uint32),
                                  ("next", ctypes.POINTER(LIBMTP_DeviceStorage)),
                                  ("prev", ctypes.POINTER(LIBMTP_DeviceStorage))]
 
+class LIBMTP_DeviceEntry(ctypes.Structure):
+	"""
+		LIBMTP_DeviceEntry
+		Contains the ctypes structure for LIBMTP_device_entry_t
+	"""
+
+	def __repr__(self):
+		return self.vendor
+
+LIBMTP_DeviceEntry._fields_ = [("vendor", ctypes.c_char_p),
+			       ("vendor_id", ctypes.c_uint16),
+			       ("product", ctypes.c_char_p),
+			       ("product_id", ctypes.c_uint16),
+			       ("device_flags", ctypes.c_uint32)]
+
+class LIBMTP_RawDevice(ctypes.Structure):
+	"""
+		LIBMTP_RawDevice
+		Contains the ctypes structure for LIBMTP_raw_device_t
+	"""
+
+	def __repr__(self):
+		return self.device_entry
+
+LIBMTP_RawDevice._fields_ = [("device_entry", LIBMTP_DeviceEntry),
+			     ("bus_location", ctypes.c_uint32),
+			     ("devnum", ctypes.c_uint8)]
+
 class LIBMTP_MTPDevice(ctypes.Structure):
 	"""
 		LIBMTP_MTPDevice
@@ -375,7 +403,7 @@ LIBMTP_Error_Number = {
 # ----------
 # Type Definitions
 # ----------
- 
+_libmtp.LIBMTP_Detect_Raw_Devices.restype = ctypes.c_int # actually LIBMTP_Error_Number enum
 _libmtp.LIBMTP_Get_Friendlyname.restype = ctypes.c_char_p
 _libmtp.LIBMTP_Get_Serialnumber.restype = ctypes.c_char_p
 _libmtp.LIBMTP_Get_Modelname.restype = ctypes.c_char_p
@@ -429,6 +457,44 @@ class MTP:
 		if __DEBUG__:
 			self.mtp.LIBMTP_Dump_Errorstack()
 			#self.mtp.LIBMTP_Clear_Errorstack()
+
+	def detect_devices(self):
+		"""
+			Detect if any MTP devices are connected
+
+			@rtype: None
+			@return: a list of LIBMTP_RawDevice instances for devices found
+
+		"""
+
+		devlist = []
+		device = LIBMTP_RawDevice()
+		devices = ctypes.pointer(device)
+		numdevs = ctypes.c_int(0)
+		err = self.mtp.LIBMTP_Detect_Raw_Devices(ctypes.byref(devices),
+							 ctypes.byref(numdevs))
+		if err == LIBMTP_Error_Number['NO_DEVICE_ATTACHED']:
+			return devlist
+		elif err == LIBMTP_Error_Number['STORAGE_FULL']:
+			# ignore this, we're just trying to detect here, not do anything else
+			pass
+		elif err == LIBMTP_Error_Number['CONNECTING']:
+			raise AlreadyConnected('CONNECTING')
+		elif err == LIBMTP_Error_Number['GENERAL']:
+			raise CommandFailed('GENERAL')
+		elif err == LIBMTP_Error_Number['PTP_LAYER']:
+			raise CommandFailed('PTP_LAYER')
+		elif err == LIBMTP_Error_Number['USB_LAYER']:
+			raise CommandFailed('USB_LAYER')
+		elif err == LIBMTP_Error_Number['MEMORY_ALLOCATION']:
+			raise CommandFailed('MEMORY_ALLOCATION')
+		elif err == LIBMTP_Error_Number['CANCELLED']:
+			raise CommandFailed('CANCELLED')
+		if numdevs.value == 0:
+			return devlist
+		for i in range(numdevs.value):
+			devlist.append(devices[i])
+		return devlist
 
 	def connect(self):
 		"""
