@@ -1,0 +1,8 @@
+include examples/deleteobject.py
+include examples/detectdevices.py
+include examples/deviceinfo.py
+include examples/mtpshell.py
+include examples/newfolder.py
+include examples/newplaylist.py
+include examples/sendfile.py
+include examples/sendtrack.py
