@@ -16,4 +16,13 @@ setup(name = "pymtp",
       author = "Nick Devito",
       author_email = "nick@nick125.com",
       url = "https://pypi.python.org/pypi/pymtp",
-      py_modules = ["pymtp"])
+      py_modules = ["pymtp"],
+      classifiers=[
+          'Intended Audience :: Developers',
+          'License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)',
+          'Operating System :: POSIX',
+          'Operating System :: MacOS :: MacOS X',
+          'Operating System :: Microsoft :: Windows',
+          'Topic :: Software Development :: Libraries :: Python Modules',
+      ],
+)
