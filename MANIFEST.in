@@ -1,3 +1,4 @@
+include COPYING
 include examples/deleteobject.py
 include examples/detectdevices.py
 include examples/deviceinfo.py
