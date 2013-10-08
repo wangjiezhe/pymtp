@@ -1,9 +1,9 @@
 About
 ------
 PyMTP is a Pythonic binding to LibMTP that allows Python programs to interact
-with LibMTP-supported devices. These devices include all recent Android
-devices, several popular MP3 players, including Creative Zen, several iRiver
-devices, NormSoft Pocket Tunes and many others.
+over Media Transfer Protocol (MTP) with LibMTP-supported devices. These devices
+include all recent Android devices, several popular MP3 players, including
+Creative Zen, several iRiver devices, NormSoft Pocket Tunes and many others.
 
 Why
 ----
