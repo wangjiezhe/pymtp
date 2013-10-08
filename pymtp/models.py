@@ -802,7 +802,8 @@ LIBMTP_File._fields_ = [
     ("storage_id", ctypes.c_uint32),
     ("filename", ctypes.c_char_p),
     ("filesize", ctypes.c_uint64),
-    ("filetype", ctypes.c_int),
+    ("modificationdate", ctypes.c_uint64),
+    ("filetype", ctypes.c_int), # LIBMTP_filetype_t enum
     ("next", ctypes.POINTER(LIBMTP_File))
     ]
 
@@ -949,7 +950,8 @@ LIBMTP_Track._fields_ = [
     ("rating", ctypes.c_uint16),
     ("usecount", ctypes.c_uint32),
     ("filesize", ctypes.c_uint64),
-    ("filetype", ctypes.c_int),
+    ("modificationdate", ctypes.c_uint64),
+    ("filetype", ctypes.c_int), # LIBMTP_filetype_t enum
     ("next", ctypes.POINTER(LIBMTP_Track)),
     ]
 
