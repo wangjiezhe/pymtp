@@ -1,8 +1,9 @@
 About
 ------
-PyMTP is a Pythonic wrapper around libmtp, allowing python applications to 
-communicate with MTP devices, such as the Microsoft(R) Zune(TM), Creative(R)
-Zen(TM) devices (except the Creative Zen Stone), and many others. 
+PyMTP is a Pythonic binding to LibMTP that allows Python programs to interact
+over Media Transfer Protocol (MTP) with LibMTP-supported devices. These devices
+include all recent Android devices, several popular MP3 players, including
+Creative Zen, several iRiver devices, NormSoft Pocket Tunes and many others.
 
 Why
 ----
