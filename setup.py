@@ -18,7 +18,7 @@ setup(name = "PyMTP",
       maintainer = "Hans-Christoph Steiner",
       maintainer_email = "hans@eds.org",
       url = "https://pypi.python.org/pypi/pymtp",
-      py_modules = ["pymtp"],
+      packages = ["pymtp"],
       classifiers=[
           'Intended Audience :: Developers',
           'License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)',
