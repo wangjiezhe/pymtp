@@ -30,6 +30,7 @@ __VERSION_MAJOR__ = 0
 __VERSION_TUPLE__ = (__VERSION_MAJOR__, __VERSION_MINOR__, __VERSION_MACRO__)
 __AUTHOR__ = "Nick Devito (nick@nick125.com)"
 __LICENSE__ = "GPL-3"
+__DEBUG__ = 1
 
 from main import *
 from constants import *

@@ -14,6 +14,7 @@ import ctypes.util
 from models import *
 from constants import *
 from errors import *
+from __init__ import __DEBUG__
 
 _module_path = ctypes.util.find_library("mtp")
 _libmtp = ctypes.CDLL(_module_path)
@@ -638,7 +639,7 @@ class MTP:
 			raise NotConnected
 
 		self.mtp.LIBMTP_Get_Storage(self.device, 0)
-		return self.device.contents.storage.contents.FreeSpaceInBytes
+		return self.device.contents.storage.contents.free_space
 
 	def get_totalspace(self):
 		"""
@@ -651,7 +652,7 @@ class MTP:
 			raise NotConnected
 
 		self.mtp.LIBMTP_Get_Storage(self.device, 0)
-		return self.device.contents.storage.contents.MaxCapacity
+		return self.device.contents.storage.contents.max_capacity
 
 	def get_usedspace(self):
 		"""
@@ -666,7 +667,7 @@ class MTP:
 
 		self.mtp.LIBMTP_Get_Storage(self.device, 0)
 		storage = self.device.contents.storage.contents
-		return (storage.MaxCapacity - storage.FreeSpaceInBytes)
+		return (storage.max_capacity - storage.free_space)
 
 	def get_usedspace_percent(self):
 		"""
@@ -685,8 +686,8 @@ class MTP:
 		# Why don't we call self.get_totalspace/self.get_usedspace
 		# here? That would require 3 *more* calls to
 		# LIBMTP_Get_Storage
-		usedspace = storage.MaxCapacity - storage.FreeSpaceInBytes
-		return ((float(usedspace) / float(storage.MaxCapacity)) * 100)
+		usedspace = storage.max_capacity - storage.free_space
+		return ((float(usedspace) / float(storage.max_capacity)) * 100)
 
 	def delete_object(self, object_id):
 		"""
