@@ -8,19 +8,19 @@
 #
 
 """
-	PyMTP is a pythonic wrapper around libmtp, making it a bit more 
-	friendly to use in python
+    PyMTP is a pythonic wrapper around libmtp, making it a bit more
+    friendly to use in python
 
-	Example Usage (or see examples/):
-		>>> import pymtp
-		>>> mtp = pymtp.MTP()
-	        >>> mtp.connect()
-		PTP: Opening session
-	        >>> print mtp.get_devicename()
-	        Device name
-	        >>> mtp.disconnect()
-		PTP: Closing session
-		>>>
+    Example Usage (or see examples/):
+        >>> import pymtp
+        >>> mtp = pymtp.MTP()
+            >>> mtp.connect()
+        PTP: Opening session
+            >>> print mtp.get_devicename()
+            Device name
+            >>> mtp.disconnect()
+        PTP: Closing session
+        >>>
 """
 
 __VERSION__ = "0.1.0"

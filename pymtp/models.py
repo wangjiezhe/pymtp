@@ -17,6 +17,7 @@ import ctypes
 # BaseModel Definition
 # ----------
 
+
 class BaseModel(object):
     """
         BaseModel
@@ -276,7 +277,6 @@ class MTPAlbum(BaseModel):
 
     parent_id = property(_get_parent_id, _set_parent_id)
 
-
     def _get_storage_id(self):
         """
             The unique storage identifier of the storage holding this album.
@@ -291,7 +291,6 @@ class MTPAlbum(BaseModel):
 
     storage_id = property(_get_storage_id, _set_storage_id)
 
-
     def _get_name(self):
         """
             The name of the album.
@@ -302,7 +301,6 @@ class MTPAlbum(BaseModel):
         self.base_structure.name = ctypes.c_char_p(str(value))
 
     name = property(_get_name, _set_name)
-
 
     def _get_artist(self):
         """
@@ -315,7 +313,6 @@ class MTPAlbum(BaseModel):
 
     artist = property(_get_artist, _set_artist)
 
-
     def _get_composer(self):
         """
             The composer of the album
@@ -326,7 +323,6 @@ class MTPAlbum(BaseModel):
         self.base_structure.composer = ctypes.c_char_p(str(value))
 
     composer = property(_get_composer, _set_composer)
-
 
     def _get_genre(self):
         """
@@ -345,7 +341,7 @@ class MTPAlbum(BaseModel):
             A list of tracks in the album
         """
         return FixedArray(self.base_structure.tracks,
-            self.base_structure.no_tracks)
+                          self.base_structure.no_tracks)
 
 
 class MTPAlbums(IterableModel):
@@ -464,6 +460,7 @@ LIBMTP_DeviceStorage._fields_ = [
     ("prev", ctypes.POINTER(LIBMTP_DeviceStorage)),
     ]
 
+
 class MTPDeviceStorage(BaseModel):
     """
         MTPDeviceStorage
@@ -532,6 +529,7 @@ class MTPDeviceStorage(BaseModel):
             The volume ID of the storage.
         """
         return str(self.base_structure.volume_id)
+
 
 class MTPDeviceStorages(IterableModel):
     """
@@ -660,6 +658,7 @@ LIBMTP_MTPDevice._fields_ = [
     ("cd", ctypes.c_void_p),
     ("next", ctypes.POINTER(LIBMTP_MTPDevice)),
     ]
+
 
 class MTPDevice(BaseModel):
     """
@@ -803,9 +802,10 @@ LIBMTP_File._fields_ = [
     ("filename", ctypes.c_char_p),
     ("filesize", ctypes.c_uint64),
     ("modificationdate", ctypes.c_uint64),
-    ("filetype", ctypes.c_int), # LIBMTP_filetype_t enum
+    ("filetype", ctypes.c_int),  # LIBMTP_filetype_t enum
     ("next", ctypes.POINTER(LIBMTP_File))
     ]
+
 
 class MTPFile(BaseModel):
     """
@@ -951,9 +951,10 @@ LIBMTP_Track._fields_ = [
     ("usecount", ctypes.c_uint32),
     ("filesize", ctypes.c_uint64),
     ("modificationdate", ctypes.c_uint64),
-    ("filetype", ctypes.c_int), # LIBMTP_filetype_t enum
+    ("filetype", ctypes.c_int),  # LIBMTP_filetype_t enum
     ("next", ctypes.POINTER(LIBMTP_Track)),
     ]
+
 
 class MTPTrack(BaseModel):
     """
@@ -1233,6 +1234,7 @@ class MTPTrack(BaseModel):
 
     filetype = property(_get_filetype, _set_filetype)
 
+
 class MTPTracks(IterableModel):
     """
         MTPTracks
@@ -1248,6 +1250,7 @@ class MTPTracks(IterableModel):
             @return: The track specified
         """
         return MTPTrack(self._get_item(key))
+
 
 # --------
 # Beginning LIBMTP_Playlist, MTPPlaylist, MTPPlaylists
@@ -1270,6 +1273,7 @@ LIBMTP_Playlist._fields_ = [
     ("no_tracks", ctypes.c_uint32),
     ("next", ctypes.POINTER(LIBMTP_Playlist)),
     ]
+
 
 class MTPPlaylist(BaseModel):
     """
@@ -1331,7 +1335,8 @@ class MTPPlaylist(BaseModel):
             @return: A L{FixedArray} containing the tracks
         """
         return FixedArray(self.base_structure.tracks,
-            self.base_structure.no_tracks)
+                          self.base_structure.no_tracks)
+
 
 class MTPPlaylists(IterableModel):
     """
@@ -1370,6 +1375,7 @@ LIBMTP_Folder._fields_ = [
     ("sibling", ctypes.POINTER(LIBMTP_Folder)),
     ("child", ctypes.POINTER(LIBMTP_Folder)),
     ]
+
 
 class MTPFolder(BaseModel):
     """
@@ -1434,6 +1440,7 @@ class MTPFolder(BaseModel):
         """
         return MTPFolders(self.base_structure.children)
 
+
 class MTPFolders(BaseModel):
     """
         MTPFolders
@@ -1483,10 +1490,10 @@ class MTPFolders(BaseModel):
 
         return level
 
+
 # --------
 # Beginning LIBMTP_FileSampleData, MTPFileSampleData
 # --------
-
 class LIBMTP_FileSampleData(ctypes.Structure):
     """
         LIBMTP_FileSampleData
@@ -1495,7 +1502,7 @@ class LIBMTP_FileSampleData(ctypes.Structure):
     """
     def __repr__(self):
         return "(%sx%s) (%sms) @ %s bytes" % (self.width, self.height,
-            self.duration, self.size)
+                                              self.duration, self.size)
 
 LIBMTP_FileSampleData._fields_ = [
     ("width", ctypes.c_uint32),
@@ -1505,6 +1512,7 @@ LIBMTP_FileSampleData._fields_ = [
     ("size", ctypes.c_uint64),
     ("data", ctypes.c_char_p),
     ]
+
 
 class MTPFileSampleData(BaseModel):
     """
@@ -1592,6 +1600,7 @@ class MTPFileSampleData(BaseModel):
 
     data = property(_get_data, _set_data)
 
+
 # ---------
 # Beginning LIBMTP_RawDevice and MTPRawDevice
 # ---------
@@ -1610,6 +1619,7 @@ LIBMTP_RawDevice._fields_ = [
     ("devnum", ctypes.c_uint8),
     ]
 
+
 class MTPRawDevice(BaseModel):
     """
         MTPRawDevice
@@ -1626,7 +1636,8 @@ class MTPRawDevice(BaseModel):
             @return: Identifier
         """
         return "%s%s-%s%s" % (self.bus_location, self.devnum,
-            self.device_entry.vendor_id, self.device_entry.product_id)
+                              self.device_entry.vendor_id,
+                              self.device_entry.product_id)
 
     @property
     def device_entry(self):
@@ -1654,6 +1665,7 @@ class MTPRawDevice(BaseModel):
             @return: Device number
         """
         return int(self.base_structure.devnum)
+
 
 class MTPRawDevices(FixedArray):
     """
