@@ -11,26 +11,26 @@ sys.path.insert(0, "../")
 import pymtp
 
 def usage():
-	print "Usage: %s <playlist name> <file ids / track ids>" % (sys.argv[0])
+    print "Usage: %s <playlist name> <file ids / track ids>" % (sys.argv[0])
 
 def main():
-	if len(sys.argv) <= 2:
-		usage()
-		sys.exit(2)
-		
-	mtp = pymtp.MTP()
-	mtp.connect()
+    if len(sys.argv) <= 2:
+        usage()
+        sys.exit(2)
 
-	name = sys.argv[1]
-	tracks = sys.argv[2:]
-	metadata = pymtp.LIBMTP_Playlist()
-	for track in tracks:
-		metadata.append(track)
+    mtp = pymtp.MTP()
+    mtp.connect()
 
-	playlist_id = mtp.create_new_playlist(name, metadata)
-	print "Created new playlist with ID: %s" % (playlist_id)
+    name = sys.argv[1]
+    tracks = sys.argv[2:]
+    metadata = pymtp.LIBMTP_Playlist()
+    for track in tracks:
+        metadata.append(track)
 
-	mtp.disconnect()
-		
+    playlist_id = mtp.create_new_playlist(name, metadata)
+    print "Created new playlist with ID: %s" % (playlist_id)
+
+    mtp.disconnect()
+
 if __name__ == "__main__":
-	main()
+    main()
