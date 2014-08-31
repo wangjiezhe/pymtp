@@ -32,7 +32,6 @@ def main():
     id3data = eyed3.load(source).tag
 
     metadata = pymtp.LIBMTP_Track()
-    metadata.parent_id = parent
 
     if hasattr(id3data, 'artist'):
         metadata.artist = id3data.artist
@@ -41,7 +40,7 @@ def main():
     if hasattr(id3data, 'album'):
         metadata.album = id3data.album
 
-    track_id = mtp.send_track_from_file(source, target, metadata)
+    track_id = mtp.send_track_from_file(source, target, metadata, parent)
     print "Created new track with ID: %s" % (track_id)
     mtp.disconnect()
 

@@ -14,7 +14,7 @@ import ctypes.util
 from models import *
 from constants import *
 from errors import *
-from __init__ import __DEBUG__
+from . import __DEBUG__
 
 _module_path = ctypes.util.find_library("mtp")
 _libmtp = ctypes.CDLL(_module_path)
@@ -541,7 +541,7 @@ class MTP(object):
         else:
             return LIBMTP_Filetype["UNKNOWN"]
 
-    def send_file_from_file(self, source, target, callback=None):
+    def send_file_from_file(self, source, target, parent=0, callback=None):
         """
             Sends a file from the filesystem to the connected device
             and stores it at the target filename inside the parent.
@@ -553,6 +553,9 @@ class MTP(object):
             @param source: The path on the filesystem where the file resides
             @type target: str
             @param target: The target filename on the device
+            @type parent: int or 0
+            @param parent: The parent directory for the file to go
+             into; If 0, the file goes into main directory
             @param callback: The function provided to libmtp to
              receive callbacks from ptp. Callback function must
              take two arguments, sent and total (in bytes)
@@ -571,7 +574,8 @@ class MTP(object):
 
         metadata = LIBMTP_File(filename=target,
                                filetype=self.find_filetype(source),
-                               filesize=os.stat(source).st_size)
+                               filesize=os.stat(source).st_size,
+                               parent_id=parent)
 
         ret = self.mtp.LIBMTP_Send_File_From_File(self.device, source,
                                                   ctypes.pointer(metadata),
@@ -583,7 +587,7 @@ class MTP(object):
 
         return metadata.item_id
 
-    def send_track_from_file(self, source, target, metadata, callback=None):
+    def send_track_from_file(self, source, target, metadata, parent=0, callback=None):
         """
             Sends a track from the filesystem to the connected
             device
@@ -594,6 +598,9 @@ class MTP(object):
             @param target: The target filename on the device
             @type metadata: LIBMTP_Track
             @param metadata: The track metadata
+            @type parent: int or 0
+            @param parent: The parent directory for the track;
+             if 0, the track will be placed in the base dir.
             @type callback: function or None
             @param callback: The function provided to libmtp to
              receive callbacks from ptp. Callback function must
@@ -614,6 +621,7 @@ class MTP(object):
         metadata.filename = target
         metadata.filetype = self.find_filetype(source)
         metadata.filesize = os.stat(source).st_size
+        metadata.parent_id = parent
 
         ret = self.mtp.LIBMTP_Send_Track_From_File(self.device, source,
                                                    ctypes.pointer(metadata),
@@ -754,7 +762,7 @@ class MTP(object):
 
         return ret
 
-    def create_new_playlist(self, metadata):
+    def create_new_playlist(self, metadata, parent=0):
         """
             Creates a new playlist based on the metadata object
             passed.
@@ -762,11 +770,16 @@ class MTP(object):
             @type metadata: LIBMTP_Playlist
             @param metadata: A LIBMTP_Playlist object describing
              the playlist
+            @type parent: int or 0
+            @param parent: The parent ID or 0 for base
+            @rtype: int
             @return: The object ID of the new playlist
         """
 
         if self.device is None:
             raise NotConnected
+
+        metadata.parent_id = parent
 
         ret = self.mtp.LIBMTP_Create_New_Playlist(self.device, ctypes.pointer(metadata))
 
