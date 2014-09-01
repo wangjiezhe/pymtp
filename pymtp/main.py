@@ -349,7 +349,7 @@ class MTP(object):
 
         ret = self.mtp.LIBMTP_Get_Filemetadata(self.device, file_id)
 
-        if not hasattr(ret, 'contents'):
+        if not bool(ret):
             raise ObjectNotFound
 
         return ret.contents
@@ -384,11 +384,28 @@ class MTP(object):
 
         return ret
 
+    def get_track_exists(self, track_id):
+        """
+            Return True (!= 0) if the track exists, False (0) if not
+
+            @type track_id: int
+            @param track_id: The unique numeric track id
+            @rtype: int
+            @return: If the track exist
+        """
+
+        if self.device is None:
+            raise NotConnected
+
+        ret = self.mtp.LIBMTP_Track_Exists(self.device, track_id)
+
+        return ret
+
     def get_track_metadata(self, track_id):
         """
             Returns the track metadata
 
-                        As per the libmtp documentation, calling this function repeatly is not
+            As per the libmtp documentation, calling this function repeatly is not
             recommended, as it is slow and creates a large amount of USB traffic.
 
             @type track_id: int
@@ -402,7 +419,7 @@ class MTP(object):
 
         ret = self.mtp.LIBMTP_Get_Trackmetadata(self.device, track_id)
 
-        if not hasattr(ret, 'contents'):
+        if not bool(ret):
             raise ObjectNotFound
 
         return ret.contents

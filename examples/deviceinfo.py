@@ -45,9 +45,12 @@ for track in mtp.get_tracklisting():
 print "Playlist listing\t\t:"
 for playlist in mtp.get_playlists():
     print "\t\t\t%s (id: %s / %s tracks)" % (playlist.name, playlist.playlist_id, playlist.no_tracks)
-    for track in playlist:
-        info = mtp.get_track_metadata(track)
-        print "\t\t\t\t%s - %s" % (info.artist, info.title)
+    for track in playlist.tracks:
+        try:
+            info = mtp.get_track_metadata(track)
+            print "\t\t\t\t%s - %s" % (info.artist, info.title)
+        except pymtp.ObjectNotFound:
+            break
 
 # Disconnect from the device
 mtp.disconnect()
