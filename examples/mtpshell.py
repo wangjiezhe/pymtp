@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 #
 # A PyMTP Shell - Automagically initiates the MTP device, makes it
 # easier to develop and test stuff.
@@ -15,31 +15,31 @@ def callback(sent, total):
     """
         A generic traffic sent/total callback
     """
-    print "Sent: %s; Total: %s" % (sent, total)
+    print("Sent: %s; Total: %s" % (sent, total))
 
 
 def main():
     mtp = pymtp.MTP()
     mtp.connect()
-    print "Welcome to the PyMTP Shell"
-    print "You are currently connected to '%s'" % (mtp.get_devicename())
-    print "Your MTP object is '%s'" % ("mtp")
-    print "Your progress callback object is '%s'" % ("callback")
-    print "To exit, type 'quit'"
+    print("Welcome to the PyMTP Shell")
+    print("You are currently connected to '%s'" % (mtp.get_devicename()))
+    print("Your MTP object is '%s'" % ("mtp"))
+    print("Your progress callback object is '%s'" % ("callback"))
+    print("To exit, type 'quit'")
     while True:
         try:
             if mtp.device:
-                result = raw_input("(connected) >>> ")
+                result = input("(connected) >>> ")
             else:
-                result = raw_input("(disconnected) >>> ")
+                result = input("(disconnected) >>> ")
             if result.startswith("quit"):
                 mtp.disconnect()
                 sys.exit()
             else:
-                exec result
-        except Exception, message:
-            print "An exception occurred:"
-            print message
+                exec(result)
+        except Exception as message:
+            print("An exception occurred:")
+            print(message)
 
 if __name__ == "__main__":
     main()

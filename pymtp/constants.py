@@ -1,5 +1,5 @@
-#!/usr/bin/env python
-# -*- coding: iso-8859-1 -*-
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 #
 # PyMTP
 # Developed by: Nick Devito (nick@nick125.com)

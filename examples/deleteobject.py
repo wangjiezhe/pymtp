@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 #
 # PyMTP demo scripts
 # (c) 2008 Nick Devito
@@ -12,7 +12,7 @@ import pymtp
 
 
 def usage():
-    print "Usage: %s <object ids>" % (sys.argv[0])
+    print("Usage: %s <object ids>" % (sys.argv[0]))
 
 
 def main():
@@ -26,7 +26,7 @@ def main():
     object_ids = sys.argv[1:]
     for object_id in object_ids:
         mtp.delete_object(int(object_id))
-        print "Deleted object %s" % (object_id)
+        print("Deleted object %s" % (object_id))
     mtp.disconnect()
 
 if __name__ == "__main__":

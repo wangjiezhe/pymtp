@@ -1,5 +1,5 @@
-#!/usr/bin/env python
-# -*- coding: iso-8859-1 -*-
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 #
 # PyMTP
 # Developed by: Nick Devito (nick@nick125.com)
@@ -32,7 +32,7 @@ __AUTHOR__ = "Nick Devito (nick@nick125.com)"
 __LICENSE__ = "GPL-3"
 __DEBUG__ = 1
 
-from main import *
-from constants import *
-from errors import *
-from models import *
+from .main import *
+from .constants import *
+from .errors import *
+from .models import *

@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 #
 # PyMTP demo scripts
 # (c) 2008 Nick Devito
@@ -9,12 +9,17 @@ import sys
 sys.path.insert(0, "../")
 
 import pymtp
-import eyed3
+import stagger
 
 
 def usage():
-    print "Usage: %s <source> <target> <parent>\n\
-            (The parent id can be 0 for the root directory)" % (sys.argv[0])
+    print("Usage: %s <source> <target> <parent>\n\
+(The parent id can be 0 for the root directory)" % (sys.argv[0]))
+
+
+def cenc(name):
+    """Check if it's not None and encode"""
+    return name is not None and name.encode() or None
 
 
 def main():
@@ -29,19 +34,22 @@ def main():
     target = sys.argv[2]
     parent = int(sys.argv[3])
 
-    id3data = eyed3.load(source).tag
+    tag = stagger.read_tag(source)
 
     metadata = pymtp.LIBMTP_Track()
 
-    if hasattr(id3data, 'artist'):
-        metadata.artist = id3data.artist
-    if hasattr(id3data, 'title'):
-        metadata.title = id3data.title
-    if hasattr(id3data, 'album'):
-        metadata.album = id3data.album
+    if hasattr(tag, 'artist'):
+        metadata.artist = cenc(tag.artist)
+    if hasattr(tag, 'title'):
+        metadata.title = cenc(tag.title)
+    if hasattr(tag, 'album'):
+        metadata.album = cenc(tag.album)
+    if hasattr(tag, 'track'):
+        metadata.tracknumber = tag.track
 
-    track_id = mtp.send_track_from_file(source, target, metadata, parent)
-    print "Created new track with ID: %s" % (track_id)
+    track_id = mtp.send_track_from_file(source, target,
+                                        metadata, parent=parent)
+    print("Created new track with ID: %s" % (track_id))
     mtp.disconnect()
 
 if __name__ == "__main__":

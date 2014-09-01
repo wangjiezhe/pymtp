@@ -1,5 +1,5 @@
-#!/usr/bin/env python
-# -*- coding: iso-8859-1 -*-
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 #
 # PyMTP
 # Developed by: Nick Devito (nick@nick125.com)
@@ -40,7 +40,7 @@ class IterableModel(BaseModel):
         IterableModel
 
         Provides a basic iterable model for CTypes data types that specify
-        a "next" parameter (as a pointer).
+        a "__next__" parameter (as a pointer).
 
         You still have to define __getitem__, etc, but you can use _get_item
         to retrieve the object!
@@ -61,9 +61,9 @@ class IterableModel(BaseModel):
         if not self.base_structure:
             raise IndexError
         current = self.base_structure
-        for i in xrange(level):
-            if current.next:
-                current = current.next.contents
+        for i in range(level):
+            if current.__next__:
+                current = current.__next__.contents
             else:
                 raise IndexError
 
@@ -85,9 +85,9 @@ class IterableModel(BaseModel):
         level = 0
         current = self.base_structure
         while True:
-            if current.next:
+            if current.__next__:
                 level += 1
-                current = current.next.contents
+                current = current.__next__.contents
             else:
                 return level
 
@@ -166,7 +166,7 @@ class FixedArray(object):
         if key > (self.length - 1):
             raise KeyError
 
-        for i in xrange(key, (self.length - 1)):
+        for i in range(key, (self.length - 1)):
             self.array[i] = self.array[i + 1]
 
     def __setitem__(self, key, value):
@@ -212,7 +212,7 @@ class FixedArray(object):
         if position > (self.length - 1):
             raise KeyError
         # Move the objects above the position
-        for i in reversed(xrange(position, (self.length - 1))):
+        for i in reversed(range(position, (self.length - 1))):
             self.array[i + 1] = self.array[i]
 
         self.array[position] = value
@@ -243,7 +243,7 @@ LIBMTP_Album._fields_ = [
     ("genre", ctypes.c_char_p),
     ("tracks", ctypes.POINTER(ctypes.c_uint32)),
     ("no_tracks", ctypes.c_uint32),
-    ("next", ctypes.POINTER(LIBMTP_Album)),
+    ("__next__", ctypes.POINTER(LIBMTP_Album)),
     ]
 
 
@@ -298,7 +298,7 @@ class MTPAlbum(BaseModel):
         return str(self.base_structure.name)
 
     def _set_name(self, value):
-        self.base_structure.name = ctypes.c_char_p(str(value))
+        self.base_structure.name = ctypes.c_char_p(value.encode())
 
     name = property(_get_name, _set_name)
 
@@ -309,7 +309,7 @@ class MTPAlbum(BaseModel):
         return str(self.base_structure.artist)
 
     def _set_artist(self, value):
-        self.base_structure.artist = ctypes.c_char_p(str(value))
+        self.base_structure.artist = ctypes.c_char_p(value.encode())
 
     artist = property(_get_artist, _set_artist)
 
@@ -320,7 +320,7 @@ class MTPAlbum(BaseModel):
         return str(self.base_structure.composer)
 
     def _set_composer(self, value):
-        self.base_structure.composer = ctypes.c_char_p(str(value))
+        self.base_structure.composer = ctypes.c_char_p(value.encode())
 
     composer = property(_get_composer, _set_composer)
 
@@ -331,7 +331,7 @@ class MTPAlbum(BaseModel):
         return str(self.base_structure.genre)
 
     def _set_genre(self, value):
-        self.base_structure.genre = ctypes.c_char_p(str(value))
+        self.base_structure.genre = ctypes.c_char_p(value.encode())
 
     genre = property(_get_genre, _set_genre)
 
@@ -456,7 +456,7 @@ LIBMTP_DeviceStorage._fields_ = [
     ("free_space_in_objects", ctypes.c_uint64),
     ("storage_description", ctypes.c_char_p),
     ("volume_id", ctypes.c_char_p),
-    ("next", ctypes.POINTER(LIBMTP_DeviceStorage)),
+    ("__next__", ctypes.POINTER(LIBMTP_DeviceStorage)),
     ("prev", ctypes.POINTER(LIBMTP_DeviceStorage)),
     ]
 
@@ -576,7 +576,7 @@ class LIBMTP_Error(ctypes.Structure):
 LIBMTP_Error._fields_ = [
     ("errornumber", ctypes.c_int),
     ("error_text", ctypes.c_char_p),
-    ("next", ctypes.POINTER(LIBMTP_Error)),
+    ("__next__", ctypes.POINTER(LIBMTP_Error)),
     ]
 
 
@@ -656,7 +656,7 @@ LIBMTP_MTPDevice._fields_ = [
     ("default_album_folder", ctypes.c_uint32),
     ("default_text_folder", ctypes.c_uint32),
     ("cd", ctypes.c_void_p),
-    ("next", ctypes.POINTER(LIBMTP_MTPDevice)),
+    ("__next__", ctypes.POINTER(LIBMTP_MTPDevice)),
     ]
 
 
@@ -803,7 +803,7 @@ LIBMTP_File._fields_ = [
     ("filesize", ctypes.c_uint64),
     ("modificationdate", ctypes.c_uint64),
     ("filetype", ctypes.c_int),  # LIBMTP_filetype_t enum
-    ("next", ctypes.POINTER(LIBMTP_File))
+    ("__next__", ctypes.POINTER(LIBMTP_File))
     ]
 
 
@@ -868,7 +868,7 @@ class MTPFile(BaseModel):
         return str(self.base_structure.filename)
 
     def _set_filename(self, value):
-        self.base_structure.filename = ctypes.c_char_p(str(value))
+        self.base_structure.filename = ctypes.c_char_p(value.encode())
 
     filename = property(_get_filename, _set_filename)
 
@@ -952,7 +952,7 @@ LIBMTP_Track._fields_ = [
     ("filesize", ctypes.c_uint64),
     ("modificationdate", ctypes.c_uint64),
     ("filetype", ctypes.c_int),  # LIBMTP_filetype_t enum
-    ("next", ctypes.POINTER(LIBMTP_Track)),
+    ("__next__", ctypes.POINTER(LIBMTP_Track)),
     ]
 
 
@@ -1006,7 +1006,7 @@ class MTPTrack(BaseModel):
         return str(self.base_structure.title)
 
     def _set_title(self, value):
-        self.base_structure.title = ctypes.c_char_p(str(value))
+        self.base_structure.title = ctypes.c_char_p(value.encode())
 
     title = property(_get_title, _set_title)
 
@@ -1019,7 +1019,7 @@ class MTPTrack(BaseModel):
         return str(self.base_structure.artist)
 
     def _set_artist(self, value):
-        self.base_structure.artist = ctypes.c_char_p(str(value))
+        self.base_structure.artist = ctypes.c_char_p(value.encode())
 
     artist = property(_get_artist, _set_artist)
 
@@ -1032,7 +1032,7 @@ class MTPTrack(BaseModel):
         return str(self.base_structure.composer)
 
     def _set_composer(self, value):
-        self.base_structure.composer = ctypes.c_char_p(str(value))
+        self.base_structure.composer = ctypes.c_char_p(value.encode())
 
     composer = property(_get_composer, _set_composer)
 
@@ -1045,7 +1045,7 @@ class MTPTrack(BaseModel):
         return str(self.base_structure.genre)
 
     def _set_genre(self, value):
-        self.base_structure.genre = ctypes.c_char_p(str(value))
+        self.base_structure.genre = ctypes.c_char_p(value.encode())
 
     genre = property(_get_genre, _set_genre)
 
@@ -1058,7 +1058,7 @@ class MTPTrack(BaseModel):
         return str(self.base_structure.album)
 
     def _set_album(self, value):
-        self.base_structure.album = ctypes.c_char_p(str(value))
+        self.base_structure.album = ctypes.c_char_p(value.encode())
 
     album = property(_get_album, _set_album)
 
@@ -1072,7 +1072,7 @@ class MTPTrack(BaseModel):
         return str(self.base_structure.date)
 
     def _set_date(self, value):
-        self.base_structure.date = ctypes.c_char_p(str(value))
+        self.base_structure.date = ctypes.c_char_p(value.encode())
 
     date = property(_get_date, _set_date)
 
@@ -1085,7 +1085,7 @@ class MTPTrack(BaseModel):
         return str(self.base_structure.filename)
 
     def _set_filename(self, value):
-        self.base_structure.filename = ctypes.c_char_p(str(value))
+        self.base_structure.filename = ctypes.c_char_p(value.encode())
 
     filename = property(_get_filename, _set_filename)
 
@@ -1271,7 +1271,7 @@ LIBMTP_Playlist._fields_ = [
     ("name", ctypes.c_char_p),
     ("tracks", ctypes.POINTER(ctypes.c_uint32)),
     ("no_tracks", ctypes.c_uint32),
-    ("next", ctypes.POINTER(LIBMTP_Playlist)),
+    ("__next__", ctypes.POINTER(LIBMTP_Playlist)),
     ]
 
 
@@ -1325,7 +1325,7 @@ class MTPPlaylist(BaseModel):
         return str(self.base_structure.name)
 
     def _set_name(self, value):
-        self.base_structure.name = ctypes.c_char_p(str(value))
+        self.base_structure.name = ctypes.c_char_p(value.encode())
 
     @property
     def tracks(self):
@@ -1427,7 +1427,7 @@ class MTPFolder(BaseModel):
         return str(self.base_structure.name)
 
     def _set_name(self, value):
-        self.base_structure.name = ctypes.c_char_p(str(value))
+        self.base_structure.name = ctypes.c_char_p(value.encode())
 
     name = property(_get_name, _set_name)
 
@@ -1462,7 +1462,7 @@ class MTPFolders(BaseModel):
             raise IndexError
 
         current = self.base_structure
-        for i in xrange(key):
+        for i in range(key):
             if current.sibling:
                 current = current.sibling.contents
             else:

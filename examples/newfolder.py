@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 #
 # PyMTP demo scripts
 # (c) 2008 Nick Devito
@@ -12,7 +12,8 @@ import pymtp
 
 
 def usage():
-    print "Usage: %s <folder name> <parent>\n(The parent id can be 0 for the root directory)" % (sys.argv[0])
+    print("Usage: %s <folder name> <parent>\n\
+(The parent id can be 0 for the root directory)" % (sys.argv[0]))
 
 
 def main():
@@ -27,7 +28,7 @@ def main():
     parent = int(sys.argv[2])
 
     folder_id = mtp.create_folder(name, parent)
-    print "Created new folder with ID: %s" % (folder_id)
+    print("Created new folder with ID: %s" % (folder_id))
     mtp.disconnect()
 
 if __name__ == "__main__":

@@ -1,5 +1,5 @@
-#!/usr/bin/env python
-# -*- coding: iso-8859-1 -*-
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 #
 # PyMTP
 # Developed by: Nick Devito (nick@nick125.com)
@@ -11,9 +11,9 @@ import os
 import ctypes
 import ctypes.util
 
-from models import *
-from constants import *
-from errors import *
+from .models import *
+from .constants import *
+from .errors import *
 from . import __DEBUG__
 
 _module_path = ctypes.util.find_library("mtp")
@@ -305,13 +305,13 @@ class MTP(object):
 
         files = self.mtp.LIBMTP_Get_Filelisting_With_Callback(self.device, callback, None)
         ret = []
-        next = files
+        __next__ = files
 
-        while next:
-            ret.append(next.contents)
-            if next.contents.next is None:
+        while __next__:
+            ret.append(__next__.contents)
+            if __next__.contents.__next__ is None:
                 break
-            next = next.contents.next
+            __next__ = __next__.contents.__next__
 
         return ret
 
@@ -349,7 +349,7 @@ class MTP(object):
 
         ret = self.mtp.LIBMTP_Get_Filemetadata(self.device, file_id)
 
-        if not hasattr(ret, 'contents'):
+        if not bool(ret):
             raise ObjectNotFound
 
         return ret.contents
@@ -374,13 +374,30 @@ class MTP(object):
 
         tracks = self.mtp.LIBMTP_Get_Tracklisting_With_Callback(self.device, callback, None)
         ret = []
-        next = tracks
+        __next__ = tracks
 
-        while next:
-            ret.append(next.contents)
-            if next.contents.next is None:
+        while __next__:
+            ret.append(__next__.contents)
+            if __next__.contents.__next__ is None:
                 break
-            next = next.contents.next
+            __next__ = __next__.contents.__next__
+
+        return ret
+
+    def get_track_exists(self, track_id):
+        """
+            Return True (!= 0) if the track exists, False (0) if not
+
+            @type track_id: int
+            @param track_id: The unique numeric track id
+            @rtype: int
+            @return: If the track exist
+        """
+
+        if self.device is None:
+            raise NotConnected
+
+        ret = self.mtp.LIBMTP_Track_Exists(self.device, track_id)
 
         return ret
 
@@ -388,7 +405,7 @@ class MTP(object):
         """
             Returns the track metadata
 
-                        As per the libmtp documentation, calling this function repeatly is not
+            As per the libmtp documentation, calling this function repeatly is not
             recommended, as it is slow and creates a large amount of USB traffic.
 
             @type track_id: int
@@ -402,7 +419,7 @@ class MTP(object):
 
         ret = self.mtp.LIBMTP_Get_Trackmetadata(self.device, track_id)
 
-        if not hasattr(ret, 'contents'):
+        if not bool(ret):
             raise ObjectNotFound
 
         return ret.contents
@@ -572,12 +589,13 @@ class MTP(object):
         if callback is not None:
             callback = Progressfunc(callback)
 
-        metadata = LIBMTP_File(filename=target,
+        metadata = LIBMTP_File(filename=target.encode(),
                                filetype=self.find_filetype(source),
                                filesize=os.stat(source).st_size,
                                parent_id=parent)
 
-        ret = self.mtp.LIBMTP_Send_File_From_File(self.device, source,
+        ret = self.mtp.LIBMTP_Send_File_From_File(self.device,
+                                                  source.encode(),
                                                   ctypes.pointer(metadata),
                                                   callback, None)
 
@@ -618,12 +636,13 @@ class MTP(object):
         if callback:
             callback = Progressfunc(callback)
 
-        metadata.filename = target
+        metadata.filename = target.encode()
         metadata.filetype = self.find_filetype(source)
         metadata.filesize = os.stat(source).st_size
         metadata.parent_id = parent
 
-        ret = self.mtp.LIBMTP_Send_Track_From_File(self.device, source,
+        ret = self.mtp.LIBMTP_Send_Track_From_File(self.device,
+                                                   source.encode(),
                                                    ctypes.pointer(metadata),
                                                    callback, None)
 
@@ -731,13 +750,13 @@ class MTP(object):
 
         playlists = self.mtp.LIBMTP_Get_Playlist_List(self.device)
         ret = []
-        next = playlists
+        __next__ = playlists
 
-        while next:
-            ret.append(next.contents)
-            if next.contents.next is None:
+        while __next__:
+            ret.append(__next__.contents)
+            if __next__.contents.__next__ is None:
                 break
-            next = next.contents.next
+            __next__ = __next__.contents.__next__
 
         return ret
 
@@ -827,33 +846,33 @@ class MTP(object):
             raise NotConnected
 
         folders = self.mtp.LIBMTP_Get_Folder_List(self.device)
-        next = folders
+        __next__ = folders
         # List of folders, key being the folder ID
         ret = {}
         # Iterate over the folders to grab the first-level parents
         while True:
-            next = next.contents
+            __next__ = __next__.contents
             scanned = True
 
             # Check if this ID exists, if not, add it
             # and trigger a scan of the children
-            if next.folder_id not in ret:
-                ret[next.folder_id] = next
+            if __next__.folder_id not in ret:
+                ret[__next__.folder_id] = __next__
                 scanned = False
 
-            if not scanned and (next.child):
+            if not scanned and (__next__.child):
                 # Scan the children
-                next = next.child
+                __next__ = __next__.child
 
-            elif next.sibling:
+            elif __next__.sibling:
                 # Scan the siblings
-                next = next.sibling
+                __next__ = __next__.sibling
 
-            elif next.parent_id != 0:
+            elif __next__.parent_id != 0:
                 # If we have no children/siblings to visit,
                 # and we aren't at the parent, go back to
                 # the parent.
-                next = self.mtp.LIBMTP_Find_Folder(folders, int(next.parent_id))
+                __next__ = self.mtp.LIBMTP_Find_Folder(folders, int(__next__.parent_id))
 
             else:
                 # We have scanned everything, let's go home.
@@ -871,21 +890,21 @@ class MTP(object):
         if self.device is None:
             raise NotConnected
         folders = self.mtp.LIBMTP_Get_Folder_List(self.device)
-        next = folders
+        __next__ = folders
         # A temporary holding space, this makes checking folder
         # IDs easier
         tmp = {}
 
         while True:
-            next = next.contents
+            __next__ = __next__.contents
             # Check of this folder is in the dict
-            if next.folder_id not in tmp:
-                tmp[next.folder_id] = next
+            if __next__.folder_id not in tmp:
+                tmp[__next__.folder_id] = __next__
 
             # Check for siblings
-            if next.sibling:
+            if __next__.sibling:
                 # Scan the sibling
-                next = next.sibling
+                __next__ = __next__.sibling
             else:
                 # We're done here.
                 break

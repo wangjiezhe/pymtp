@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 #
 # PyMTP demo scripts
 # (c) 2008 Nick Devito
@@ -11,7 +11,7 @@ sys.path.insert(0, "../")
 import pymtp
 
 def usage():
-    print "Usage: %s <playlist name> <file ids / track ids>" % (sys.argv[0])
+    print("Usage: %s <playlist name> <file ids / track ids>" % (sys.argv[0]))
 
 def main():
     if len(sys.argv) <= 2:
@@ -28,7 +28,7 @@ def main():
         metadata.append(track)
 
     playlist_id = mtp.create_new_playlist(name, metadata)
-    print "Created new playlist with ID: %s" % (playlist_id)
+    print("Created new playlist with ID: %s" % (playlist_id))
 
     mtp.disconnect()
 
