@@ -6,3 +6,4 @@ MANIFEST
 *.swp
 tags
 *.bak
+.idea/

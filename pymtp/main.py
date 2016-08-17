@@ -32,6 +32,7 @@ _libmtp.LIBMTP_Get_Modelname.restype = ctypes.c_char_p
 _libmtp.LIBMTP_Get_Manufacturername.restype = ctypes.c_char_p
 _libmtp.LIBMTP_Get_Deviceversion.restype = ctypes.c_char_p
 _libmtp.LIBMTP_Get_Filelisting_With_Callback.restype = ctypes.POINTER(LIBMTP_File)
+_libmtp.LIBMTP_Get_Files_And_Folders.restype = ctypes.POINTER(LIBMTP_File)
 _libmtp.LIBMTP_Get_Tracklisting_With_Callback.restype = ctypes.POINTER(LIBMTP_Track)
 _libmtp.LIBMTP_Get_Filetype_Description.restype = ctypes.c_char_p
 _libmtp.LIBMTP_Get_Filemetadata.restype = ctypes.POINTER(LIBMTP_File)
@@ -304,6 +305,38 @@ class MTP(object):
             callback = Progressfunc(callback)
 
         files = self.mtp.LIBMTP_Get_Filelisting_With_Callback(self.device, callback, None)
+        ret = []
+        __next__ = files
+
+        while __next__:
+            ret.append(__next__.contents)
+            if __next__.contents.__next__ is None:
+                break
+            __next__ = __next__.contents.__next__
+
+        return ret
+
+    def get_files_and_folders(self, parent=0, storage=0):
+        """
+            Return the contents of a certain folder with id parent on
+            a certain storage on a certain device.
+            The result contains both files and folers.
+
+            @type parent: int
+            @param parent: The parent id or 0 for the main directory
+            @type storage: int
+            @param storage: The storage on device to report info from.
+             If 0 is passed in, the files for the given parent will be
+             searched across all available storage.
+            @rtype: list
+            @return: Return a list with the file listing in the
+             certain parent folder.
+        """
+
+        if self.device is None:
+            raise NotConnected
+
+        files = self.mtp.LIBMTP_Get_Files_And_Folders(self.device, storage, parent)
         ret = []
         __next__ = files
 
