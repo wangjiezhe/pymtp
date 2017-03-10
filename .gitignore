@@ -7,3 +7,4 @@ MANIFEST
 tags
 *.bak
 .idea/
+*.egg-info/
